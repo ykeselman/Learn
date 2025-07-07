@@ -172,3 +172,10 @@ X, y = cancer.data, cancer.target
 df = train_with_regularization(X, y, 'none', l1_lambda=0.005)
 
 print(df)
+
+# %%
+p = 0.9999999
+
+from math import log
+-log(p), -log(1-p)
+# %%
