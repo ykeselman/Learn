@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-# from torch.utils.data import DataLoader, TensorDataset
 import random
 
 # Set random seeds for reproducibility
@@ -44,6 +43,7 @@ class IrisNet(nn.Module):
         self.fc2 = nn.Linear(hidden1_size, hidden2_size)
         self.fc3 = nn.Linear(hidden2_size, num_classes)
         self.relu = nn.ReLU()
+        # self.relu = nn.SELU()
         self.dropout = nn.Dropout(0.2)
         
     def forward(self, x):
