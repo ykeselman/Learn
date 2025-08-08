@@ -2,6 +2,8 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
+
+# %%
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -68,38 +70,43 @@ class IrisClassifier(nn.Module):
     def forward(self, x):
         return self.layers(x)
 
-# Initialize model, loss function, and optimizer
-model = IrisClassifier(architecture='deep')
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+# %%
+def evaluate_arch(arch):
+    # Initialize model, loss function, and optimizer
+    model = IrisClassifier(architecture=arch)
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.01)
+
+    # Training loop
+    epochs = 100
+    for epoch in range(epochs):
+        # Forward pass
+        outputs = model(X_train)
+        loss = criterion(outputs, y_train)
+        
+        # Backward pass and optimization
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+        
+        # if (epoch + 1) % 20 == 0:
+        #     print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}')
+
+    # Evaluation
+    model.eval()
+    with torch.no_grad():
+        test_outputs = model(X_test)
+        _, predicted = torch.max(test_outputs.data, 1)
+        accuracy = (predicted == y_test).sum().item() / len(y_test)
+        print("Model architecture:", arch)
+        print(f'Test Accuracy: {accuracy:.4f}')
+        print()
+        # Show some predictions
+        # print("\nSample predictions:")
+        # for i in range(min(5, len(y_test))):
+        #     print(f"Actual: {iris.target_names[y_test[i]]}, "
+        #         f"Predicted: {iris.target_names[predicted[i]]}")
 
 # %%
-# Training loop
-epochs = 100
-for epoch in range(epochs):
-    # Forward pass
-    outputs = model(X_train)
-    loss = criterion(outputs, y_train)
-    
-    # Backward pass and optimization
-    optimizer.zero_grad()
-    loss.backward()
-    optimizer.step()
-    
-    if (epoch + 1) % 20 == 0:
-        print(f'Epoch [{epoch+1}/{epochs}], Loss: {loss.item():.4f}')
-
-# %%
-# Evaluation
-model.eval()
-with torch.no_grad():
-    test_outputs = model(X_test)
-    _, predicted = torch.max(test_outputs.data, 1)
-    accuracy = (predicted == y_test).sum().item() / len(y_test)
-    print(f'\nTest Accuracy: {accuracy:.4f}')
-    
-    # Show some predictions
-    print("\nSample predictions:")
-    for i in range(min(5, len(y_test))):
-        print(f"Actual: {iris.target_names[y_test[i]]}, "
-              f"Predicted: {iris.target_names[predicted[i]]}")
+for arch in ['minimal', 'deep', 'wide', 'original']:
+    evaluate_arch(arch)
