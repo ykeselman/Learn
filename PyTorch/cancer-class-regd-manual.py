@@ -45,7 +45,7 @@ class DropoutRegdClassifer(RegdClassifier):
             nn.Dropout(dropout/2),    # Less dropout in later layers
             nn.Linear(hidden_size // 2, output_size)
         )
-    
+
 # %% batch
 class BatchNormRegdClassifier(RegdClassifier):
     def _get_layers(self, input_size, hidden_size, output_size, **kwargs):
@@ -108,7 +108,7 @@ def train_with_regularization(X: np.array, y: np.array, reg_type: str, epochs=20
     scaler = StandardScaler()
     X_train = scaler.fit_transform(X_train)
     X_test = scaler.transform(X_test)
-    
+
     X_train = torch.FloatTensor(X_train)
     X_test = torch.FloatTensor(X_test)
     y_train = torch.LongTensor(y_train)
@@ -132,7 +132,7 @@ def train_with_regularization(X: np.array, y: np.array, reg_type: str, epochs=20
             # Training metrics
             _, train_predicted = torch.max(train_outputs.data, 1)
             train_acc = (train_predicted == y_train).sum().item() / len(y_train)
-            
+
             # Test metrics
             test_outputs = model(X_test)
             test_loss = model.my_loss(test_outputs, y_test, **kwargs)
